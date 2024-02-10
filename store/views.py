@@ -1,8 +1,9 @@
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models.product import Product
 from .models.category import Category
 from .models.customer import Customer
+from django.contrib.auth.hashers import make_password, check_password
 
 
 # Create your views here.
@@ -35,7 +36,24 @@ def signup(request):
       city=postdata.get('city')
       state=postdata.get('state')
       password=postdata.get('password')
+
+      value={
+         'first_name' : first_name,
+         'last_name': last_name,
+         'email': email,
+         'phone':phone,
+         'image':image,
+         'address':address,
+         'city':city,
+         'state':state,
+
+      }
+
+
+      #validation
       
+      error_message= None
+
       customer=Customer(
          first_name=first_name,
          last_name=last_name,
@@ -47,5 +65,28 @@ def signup(request):
          state=state,
          password=password
       )
-      customer.register()
-      return HttpResponse("signup success")
+
+      if(not first_name):
+         error_message="First Name is Required"
+      elif len(first_name) < 3:
+         error_message ="First Name must be 3 Char long or more"
+      elif not last_name:
+         error_message="Last Name is Required"
+      elif not phone:
+         error_message="Phone is Required"
+      elif len(phone) < 10:
+         error_message="Phone Number is Incorrect"
+      elif not email:
+         error_message="Email is Required"
+      elif len(password) < 6:
+         error_message="Password must be 6 char long or more"
+      elif  customer.isExit():
+         error_message="Email Already used"         
+      if not error_message:
+         customer.password=make_password(customer.password)
+         customer.register()
+         return redirect('home')
+      else:
+         data= {'error':error_message,
+                'values': value}
+         return render(request,'signup.html', data)
