@@ -97,3 +97,26 @@ def signup(request):
      return render(request,'signup.html')
    else:
      return registerUser(request)
+   
+def login(request):
+   if request.method == "GET":
+      return render(request, 'login.html')   
+   else:
+      postdata=request.POST
+      email=postdata.get('email')
+      password=postdata.get('password')
+      customer=Customer.get_customer_by_email(email)
+
+      error_message=None
+      if customer:
+            flag=check_password(password ,customer.password)
+            if flag:
+               return redirect('home')
+            else:
+               error_message="Passwod is Wrong"
+               return render(request,'login.html',{'error':error_message})
+               
+      else:
+         error_message="Email or Password is Wrong"
+         return render(request,'login.html',{'error':error_message})
+
