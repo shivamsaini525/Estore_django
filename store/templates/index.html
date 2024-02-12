@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
+{% load cart %}
 <!-- coursol Start -->
 <div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel">
   <div class="carousel-indicators">
@@ -72,14 +73,14 @@
               <h5 class="card-title">{{product.name}}</h5>
               <p><b><i>Price :</i>{{product.price}}</b></p>
               <p class="card-text">{{product.description}}</p>
-              
+              {{product | is_in_cart:request.session.cart}}
               <form method="POST" action="/">
                 {% csrf_token %}
                 <input type="text"  hidden name="product" value="{{product.id}}">
                 <input type="submit" class="float-right btn btn-success btn-sm" value="Add to Cart">
 
               </form>
-
+ 
               </div>
           </div>
           {% endfor %}

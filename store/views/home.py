@@ -7,9 +7,20 @@ from django.views import View
 class Index(View):
    
    def post(self, request):
-       product=request.POST.get('product')
-       
-       return redirect('home')
+        product=request.POST.get('product')
+        cart=request.session.get('cart')
+        if cart:
+           quantity=cart.get(product)
+           if quantity:
+              cart[product]=quantity+1
+           else:
+               cart[product]=1
+        else:
+           cart={}
+           cart[product]=1
+        request.session['cart']=cart
+        print('cart',request.session['cart'])
+        return redirect('home')
 
   
 
@@ -17,6 +28,7 @@ class Index(View):
 
    def get(self,request):
         products= None
+        
         categories=Category.get_all_categories()
         categoryID=request.GET.get('category')
         if categoryID:
@@ -27,7 +39,7 @@ class Index(View):
         data['products']=products
         data['categories']=categories
         print(request.session.get('email'))
-        print(request.session.get('customer_id'))
+       
 
         return render(request,'index.html',data)
       
