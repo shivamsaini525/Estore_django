@@ -78,11 +78,13 @@
           
  
             </div>
+            {{product | is_in_cart:reuest.session.cart}}
             <div class="card-footer p-1 no-gutters">
-              <form method="POST" action="/" class="form-control">
+              
+              <form method="POST" action="/" class="btn-block">
                 {% csrf_token %}
                 <input type="text"  hidden name="product" value="{{product.id}}">
-                <input type="submit" class="float-right btn-block btn btn-success " value="Add to Cart">
+                <input type="submit" class="float-right btn-block btn btn-success form-control" value="Add to Cart">
               </form>
               <div class="row" hidden>
                 <input type="submit" value="-" class="col-2 btn btn-block btn-success">
